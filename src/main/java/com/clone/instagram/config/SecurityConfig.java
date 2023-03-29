@@ -19,6 +19,14 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
     private JwtTokenProvider jwtTokenProvider;
 
+    private static final String[] PUBLIC_URLS = {
+            "/api/v1/login"
+    };
+
+    private static final String[] USER_URLS = {
+            "/api/v1/users/**"
+    };
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -27,9 +35,8 @@ public class SecurityConfig {
                 .and()
                 .cors().configurationSource(corsConfigurationSource()).and()
                 .authorizeRequests()
-                .antMatchers("/api/v1/users/*").permitAll()
-                .antMatchers("/api/v1/login").permitAll()
-                .antMatchers("/api/v1/profile").permitAll()
+                .antMatchers(PUBLIC_URLS).permitAll()
+                .antMatchers(USER_URLS).hasAnyRole("ROLE_USER")
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic().disable()

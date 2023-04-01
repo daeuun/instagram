@@ -19,12 +19,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// Jwt 토큰 발급 및 실제 검증
 @Slf4j
 @Component
 public class JwtTokenProvider {
-    @Value("\\${jwt.key}")
-    private String key;
-    private final Key jwtKey = Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8));
+    private final Key jwtKey;
+
+    public JwtTokenProvider(@Value("${jwt.key}") String key) {
+        this.jwtKey = Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8));
+    }
+
     private static final String BEARER_TYPE = "Bearer";
     private static final String CLAIM_JWT_TYPE_KEY = "type";
     private static final String CLAIM_AUTHORITIES_KEY = "authorities";
@@ -91,11 +95,9 @@ public class JwtTokenProvider {
 
     private Claims parseClaims(String accessToken) {
         try {
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+            return Jwts.parserBuilder().setSigningKey(jwtKey).build().parseClaimsJws(accessToken).getBody();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
     }
-
-
 }

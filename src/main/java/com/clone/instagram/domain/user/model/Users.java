@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -35,18 +36,32 @@ public class Users {
         this.email = email;
         this.nickname = nickname;
         this.password = password;
+        this.followers = new HashSet<>();
+        this.following = new HashSet<>();
     }
 
     public Users(boolean deleted) {
         this.deleted = deleted;
     }
 
+    public Users(String email, String nickname, String password, String profileImage, boolean deleted) {
+    }
+
     public Users withdraw() {
-        return new Users(true);
+        return new Users(this.deleted = true);
     }
 
     public void update(UpdateProfileRequest request) {
         this.nickname = request.getNickname();
         this.profileImage = request.getProfileImage();
+    }
+
+    public Users clone() {
+        return new Users(
+                this.email,
+                this.nickname,
+                this.password,
+                this.profileImage,
+                this.deleted);
     }
 }

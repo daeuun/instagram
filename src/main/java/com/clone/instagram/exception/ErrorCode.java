@@ -12,10 +12,12 @@ public enum ErrorCode {
     // User
     NO_AUTHORITY(403, "U001", "권한이 없습니다."),
     USER_DOES_NOT_EXISTS(404, "U002", "회원 정보를 찾을수 없습니다."),
+    USER_ALREADY_EXISTS(400, "U003", "이미 가입된 회원입니다."),
+    INVALID_PROFILE_REQUEST(400, "U004", "유효하지 않은 프로필 조회 요청입니다."),
+    ALREADY_FOLLOWING(400, "U005", "이미 팔로우한 회원입니다."),
 
     // jwt
     INVALID_REFRESH_TOKEN(401, "J001", "유효하지 않은 Refresh Token 입니다."),
-
     ;
 
     private final int status;

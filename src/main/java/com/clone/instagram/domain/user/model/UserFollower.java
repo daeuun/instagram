@@ -1,10 +1,11 @@
 package com.clone.instagram.domain.user.model;
 
 import jakarta.persistence.*;
-import org.springframework.data.annotation.Id;
+import lombok.Getter;
 
 @Entity
 @Table(name = "user_follower")
+@Getter
 public class UserFollower {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

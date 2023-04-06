@@ -9,7 +9,6 @@ import com.clone.instagram.domain.user.model.Users;
 import com.clone.instagram.domain.user.repository.UserFollowerRepository;
 import com.clone.instagram.domain.user.repository.UserFollowingRepository;
 import com.clone.instagram.domain.user.repository.UserRepository;
-import com.clone.instagram.domain.user.repository.UserRepositoryCustom;
 import com.clone.instagram.domain.user.util.PasswordUtil;
 import com.clone.instagram.exception.BusinessException;
 import com.clone.instagram.exception.ErrorCode;
@@ -26,8 +25,6 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private UserRepositoryCustom userRepositoryCustom;
     @Autowired
     private RefreshTokenService refreshTokenService;
     @Autowired

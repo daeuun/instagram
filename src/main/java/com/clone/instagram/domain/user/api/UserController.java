@@ -19,7 +19,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/users")
+    @PostMapping("/signup")
     public Boolean signUp(@Validated @RequestBody SignUpRequest request) {
         userService.signup(request);
         return true;

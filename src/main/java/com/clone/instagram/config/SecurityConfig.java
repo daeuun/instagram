@@ -31,7 +31,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // return new BCryptPasswordEncoder();
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
@@ -63,7 +62,7 @@ public class SecurityConfig {
     @Bean // configure 상속 -> Bean 등록으로 변경
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable() // 403 에러 : rest api면 비활성화
+                .csrf().disable()
                 .cors().disable()
                 .httpBasic().disable()
                 .formLogin().disable()
@@ -71,6 +70,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests((authz) -> authz
                         .requestMatchers(new AntPathRequestMatcher(("/api/v1/auth"))).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher(("/api/v1/signup"))).permitAll()
                         .anyRequest().hasRole("ROLE_USER"))
                 .apply(new JwtConfigurer(jwtTokenProvider));
         http

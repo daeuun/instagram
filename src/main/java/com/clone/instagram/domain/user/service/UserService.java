@@ -3,9 +3,12 @@ package com.clone.instagram.domain.user.service;
 import com.clone.instagram.domain.authentication.model.RefreshToken;
 import com.clone.instagram.domain.authentication.service.RefreshTokenService;
 import com.clone.instagram.domain.user.dto.SignUpRequest;
+import com.clone.instagram.domain.user.dto.UserProfileResponseDto;
+import com.clone.instagram.domain.user.model.UserFollower;
 import com.clone.instagram.domain.user.model.Users;
+import com.clone.instagram.domain.user.repository.UserFollowerRepository;
+import com.clone.instagram.domain.user.repository.UserFollowingRepository;
 import com.clone.instagram.domain.user.repository.UserRepository;
-import com.clone.instagram.domain.user.repository.UserRepositoryCutsom;
 import com.clone.instagram.domain.user.util.PasswordUtil;
 import com.clone.instagram.exception.BusinessException;
 import com.clone.instagram.exception.ErrorCode;
@@ -23,11 +26,13 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private UserRepositoryCutsom userRepositoryCutsom;
-    @Autowired
     private RefreshTokenService refreshTokenService;
     @Autowired
     private PasswordUtil passwordUtil;
+    @Autowired
+    private UserFollowerRepository userFollowerRepository;
+    @Autowired
+    private UserFollowingRepository userFollowingRepository;
 
     public void signup(SignUpRequest request) {
         Optional.ofNullable(
@@ -65,6 +70,26 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public UserProfileResponseDto getMyProfile() {
+        Users user = userRepository.findByEmailAndDeleted(contextId(), false);
+        int followerCount = userFollowerRepository.findAllById(user.getId()).size();
+        int followingCount = userFollowingRepository.findAllById(user.getId()).size();
+        return new UserProfileResponseDto(user.getNickname(), user.getEmail(), user.getProfileImage(), followerCount, followingCount);
+    }
+
+    public Boolean follow(Long userId) {
+        Users currentUser = userRepository.findByEmailAndDeleted(contextId(), false);
+        Users userToFollow = userRepository.findByIdAndDeleted(userId, false);
+
+        boolean isAlreadyFollowing = userFollowerRepository.existsByUserAndFollower(currentUser, userToFollow);
+        if (isAlreadyFollowing) {
+            throw new BusinessException(ErrorCode.ALREADY_FOLLOWING);
+        }
+        UserFollower userFollower = UserFollower.follow(userToFollow, currentUser);
+        userFollowerRepository.save(userFollower);
+        return true;
+    }
+
     private String contextId() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {
@@ -72,6 +97,5 @@ public class UserService {
         }
         return null;
     }
-
 
 }

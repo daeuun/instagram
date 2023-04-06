@@ -23,5 +23,7 @@ public class RefreshTokenService {
         refreshTokenRepository.save(new RefreshToken(newToken, oldToken.getId()));
     }
 
-
+    public void deleteRefreshToken(RefreshToken refreshToken) {
+        refreshTokenRepository.delete(refreshToken);
+    }
 }

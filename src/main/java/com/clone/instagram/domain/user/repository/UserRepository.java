@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<Users, Long> {
     Users findByEmailAndDeleted(String email, boolean deleted);
 
-    Users findByIdAndDeleted(String id, boolean deleted);
+    Users findByIdAndDeleted(Long id, boolean deleted);
 
 }

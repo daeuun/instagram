@@ -10,33 +10,27 @@ import com.clone.instagram.exception.BusinessException;
 import com.clone.instagram.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthenticationService {
 
-    @Autowired
-    private AuthenticationManagerBuilder authenticationManagerBuilder;
-
     private final JwtTokenProvider jwtTokenProvider;
-
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private RefreshTokenService refreshTokenService;
 
-    public AuthenticationService(AuthenticationManagerBuilder authenticationManagerBuilder, JwtTokenProvider jwtTokenProvider) {
-        this.authenticationManagerBuilder = authenticationManagerBuilder;
+    @Autowired
+    public AuthenticationService(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
     public JwtDto authenticate(LoginRequest loginRequest) {
         UsernamePasswordAuthenticationToken authenticationToken
-                = new UsernamePasswordAuthenticationToken(loginRequest.getNickname(), loginRequest.getNickname());
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        return jwtTokenProvider.generateTokenDto(authentication);
+                = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
+        return jwtTokenProvider.generateTokenDto(authenticationToken);
     }
 
     public JwtDto refresh(String refreshToken) {

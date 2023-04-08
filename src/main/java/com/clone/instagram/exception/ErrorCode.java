@@ -15,6 +15,7 @@ public enum ErrorCode {
     USER_ALREADY_EXISTS(400, "U003", "이미 가입된 회원입니다."),
     INVALID_PROFILE_REQUEST(400, "U004", "유효하지 않은 프로필 조회 요청입니다."),
     ALREADY_FOLLOWING(400, "U005", "이미 팔로우한 회원입니다."),
+    NICKNAME_DUPLICATED(400, "U006", "이미 존재하는 닉네임입니다."),
 
     // jwt
     INVALID_REFRESH_TOKEN(401, "J001", "유효하지 않은 Refresh Token 입니다."),

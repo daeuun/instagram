@@ -51,17 +51,9 @@ public class Users {
         return new Users(this.deleted = true);
     }
 
-    public void update(UpdateProfileRequest request) {
+    public Users updateProfile(UpdateProfileRequest request) {
         this.nickname = request.getNickname();
         this.profileImage = request.getProfileImage();
-    }
-
-    public Users clone() {
-        return new Users(
-                this.email,
-                this.nickname,
-                this.password,
-                this.profileImage,
-                this.deleted);
+        return this;
     }
 }

@@ -3,6 +3,7 @@ package com.clone.instagram.domain.user.service;
 import com.clone.instagram.domain.authentication.model.RefreshToken;
 import com.clone.instagram.domain.authentication.service.RefreshTokenService;
 import com.clone.instagram.domain.user.dto.SignUpRequest;
+import com.clone.instagram.domain.user.dto.UpdateProfileRequest;
 import com.clone.instagram.domain.user.dto.UserProfileResponseDto;
 import com.clone.instagram.domain.user.model.UserFollower;
 import com.clone.instagram.domain.user.model.Users;
@@ -70,11 +71,32 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public UserProfileResponseDto getMyProfile() {
+    public UserProfileResponseDto userProfile(Long userId) {
         Users user = userRepository.findByEmailAndDeleted(contextId(), false);
-        int followerCount = userFollowerRepository.findAllById(user.getId()).size();
-        int followingCount = userFollowingRepository.findAllById(user.getId()).size();
-        return new UserProfileResponseDto(user.getNickname(), user.getEmail(), user.getProfileImage(), followerCount, followingCount);
+        return Optional.ofNullable(user)
+                .map(u -> new UserProfileResponseDto(u.getNickname(), u.getEmail(), u.getProfileImage()))
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_DOES_NOT_EXISTS));
+    }
+
+    public Users updateProfile(UpdateProfileRequest request) {
+//        if (request.getNickname() != null) {
+//            Optional<Users> duplicatedUser =
+//                    userRepository.findByNicknameAndNotEmailAndNotDeleted(request.getNickname(), contextId(), true);
+//            if (duplicatedUser.isPresent()) {
+//                throw new BusinessException(ErrorCode.NICKNAME_DUPLICATED);
+//            }
+//        }
+
+        //nickname 중복검사
+        Optional.ofNullable(request.getNickname())
+                .filter(nickname -> !nickname.isBlank())
+                .map(nickname -> userRepository.findByNicknameAndEmailNotAndDeleted(nickname, contextId(), true))
+                .orElseThrow(() -> new BusinessException(ErrorCode.NICKNAME_DUPLICATED));
+
+
+        Users myInfo = userRepository.findByEmailAndDeleted(contextId(), false);
+        Users updatedUser = myInfo.updateProfile(request);
+        return userRepository.save(updatedUser);
     }
 
     public Boolean follow(Long userId) {

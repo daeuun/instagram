@@ -9,7 +9,4 @@ public class UserProfileResponseDto {
     private String email;
     private String nickname;
     private String profileImage;
-    private int followerCount;
-    private int followingCount;
-
 }

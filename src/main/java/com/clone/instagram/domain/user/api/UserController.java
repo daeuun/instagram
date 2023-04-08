@@ -40,11 +40,20 @@ public class UserController {
         return new ResponseEntity(result, HttpStatus.valueOf(result.getStatus()));
     }
 
-    @GetMapping("/users/me")
-    public ResponseEntity<ResultResponse> getMyProfile() {
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<ResultResponse> userProfile(@PathVariable Long userId) {
         ResultResponse result = ResultResponse.of(
-                ResultCode.GET_MY_PROFILE_SUCCESS,
-                userService.getMyProfile()
+                ResultCode.GET_USER_PROFILE_SUCCESSFULLY,
+                userService.userProfile(userId)
+        );
+        return new ResponseEntity(result, HttpStatus.valueOf(result.getStatus()));
+    }
+
+    @PutMapping("/users/me")
+    public ResponseEntity<ResultResponse> updateProfile(UpdateProfileRequest request) {
+        ResultResponse result = ResultResponse.of(
+                ResultCode.UPDATE_MY_PROFILE_SUCCESSFULLY,
+                userService.updateProfile(request)
         );
         return new ResponseEntity(result, HttpStatus.valueOf(result.getStatus()));
     }

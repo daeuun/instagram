@@ -50,7 +50,8 @@ public class UserController {
     }
 
     @PutMapping("/users/me")
-    public ResponseEntity<ResultResponse> updateProfile(UpdateProfileRequest request) {
+    public ResponseEntity<ResultResponse> updateProfile(@RequestBody UpdateProfileRequest request) {
+
         ResultResponse result = ResultResponse.of(
                 ResultCode.UPDATE_MY_PROFILE_SUCCESSFULLY,
                 userService.updateProfile(request)

@@ -25,9 +25,9 @@ public class Users {
     private String password;
     private String profileImage;
     private boolean deleted;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<UserFollower> followers;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<UserFollowing> following;
 
     protected Users() {}
@@ -51,17 +51,9 @@ public class Users {
         return new Users(this.deleted = true);
     }
 
-    public void update(UpdateProfileRequest request) {
+    public Users updateProfile(UpdateProfileRequest request) {
         this.nickname = request.getNickname();
         this.profileImage = request.getProfileImage();
-    }
-
-    public Users clone() {
-        return new Users(
-                this.email,
-                this.nickname,
-                this.password,
-                this.profileImage,
-                this.deleted);
+        return this;
     }
 }

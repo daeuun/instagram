@@ -3,9 +3,13 @@ package com.clone.instagram.domain.user.service;
 import com.clone.instagram.domain.authentication.model.RefreshToken;
 import com.clone.instagram.domain.authentication.service.RefreshTokenService;
 import com.clone.instagram.domain.user.dto.SignUpRequest;
+import com.clone.instagram.domain.user.dto.UpdateProfileRequest;
+import com.clone.instagram.domain.user.dto.UserProfileResponseDto;
+import com.clone.instagram.domain.user.model.UserFollower;
 import com.clone.instagram.domain.user.model.Users;
+import com.clone.instagram.domain.user.repository.UserFollowerRepository;
+import com.clone.instagram.domain.user.repository.UserFollowingRepository;
 import com.clone.instagram.domain.user.repository.UserRepository;
-import com.clone.instagram.domain.user.repository.UserRepositoryCutsom;
 import com.clone.instagram.domain.user.util.PasswordUtil;
 import com.clone.instagram.exception.BusinessException;
 import com.clone.instagram.exception.ErrorCode;
@@ -23,11 +27,13 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private UserRepositoryCutsom userRepositoryCutsom;
-    @Autowired
     private RefreshTokenService refreshTokenService;
     @Autowired
     private PasswordUtil passwordUtil;
+    @Autowired
+    private UserFollowerRepository userFollowerRepository;
+    @Autowired
+    private UserFollowingRepository userFollowingRepository;
 
     public void signup(SignUpRequest request) {
         Optional.ofNullable(
@@ -65,6 +71,47 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public UserProfileResponseDto userProfile(Long userId) {
+        Users user = userRepository.findByEmailAndDeleted(contextId(), false);
+        return Optional.ofNullable(user)
+                .map(u -> new UserProfileResponseDto(u.getNickname(), u.getEmail(), u.getProfileImage()))
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_DOES_NOT_EXISTS));
+    }
+
+    public Users updateProfile(UpdateProfileRequest request) {
+//        if (request.getNickname() != null) {
+//            Optional<Users> duplicatedUser =
+//                    userRepository.findByNicknameAndNotEmailAndNotDeleted(request.getNickname(), contextId(), true);
+//            if (duplicatedUser.isPresent()) {
+//                throw new BusinessException(ErrorCode.NICKNAME_DUPLICATED);
+//            }
+//        }
+
+        //nickname 중복검사
+        Optional.ofNullable(request.getNickname())
+                .filter(nickname -> !nickname.isBlank())
+                .map(nickname -> userRepository.findByNicknameAndEmailNotAndDeleted(nickname, contextId(), true))
+                .orElseThrow(() -> new BusinessException(ErrorCode.NICKNAME_DUPLICATED));
+
+
+        Users myInfo = userRepository.findByEmailAndDeleted(contextId(), false);
+        Users updatedUser = myInfo.updateProfile(request);
+        return userRepository.save(updatedUser);
+    }
+
+    public Boolean follow(Long userId) {
+        Users currentUser = userRepository.findByEmailAndDeleted(contextId(), false);
+        Users userToFollow = userRepository.findByIdAndDeleted(userId, false);
+
+        boolean isAlreadyFollowing = userFollowerRepository.existsByUserAndFollower(currentUser, userToFollow);
+        if (isAlreadyFollowing) {
+            throw new BusinessException(ErrorCode.ALREADY_FOLLOWING);
+        }
+        UserFollower userFollower = UserFollower.follow(userToFollow, currentUser);
+        userFollowerRepository.save(userFollower);
+        return true;
+    }
+
     private String contextId() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {
@@ -72,6 +119,5 @@ public class UserService {
         }
         return null;
     }
-
 
 }

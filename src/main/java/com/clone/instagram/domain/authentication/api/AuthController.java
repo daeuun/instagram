@@ -15,7 +15,7 @@ public class AuthController {
     @Autowired
     private AuthenticationService authenticationService;
 
-    @PostMapping("/login")
+    @GetMapping("/login")
     public ResultResponse login(@RequestBody LoginRequest loginRequest) {
         JwtDto jwtDto = authenticationService.authenticate(loginRequest);
         return ResultResponse.of(ResultCode.LOGIN_SUCCESS, jwtDto);

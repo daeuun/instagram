@@ -20,4 +20,12 @@ public class PostImage {
     }
 
     public PostImage() {}
+
+    public PostImage(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public void setPost(Posts post) {
+        this.post = post;
+    }
 }

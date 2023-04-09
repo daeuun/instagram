@@ -1,12 +1,23 @@
 package com.clone.instagram.domain.post.service;
 
 import com.clone.instagram.domain.post.dto.CreatePostRequest;
+import com.clone.instagram.domain.post.dto.PostDto;
+import com.clone.instagram.domain.post.model.PostImage;
+import com.clone.instagram.domain.post.model.Posts;
 import com.clone.instagram.domain.post.repository.PostRepository;
 import com.clone.instagram.domain.user.model.Users;
 import com.clone.instagram.domain.user.repository.UserRepository;
+import com.clone.instagram.exception.BusinessException;
+import com.clone.instagram.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.eclipse.jdt.internal.compiler.problem.ProblemSeverities.Optional;
 
 @Service
 public class PostService {
@@ -22,4 +33,18 @@ public class PostService {
         return true;
     }
 
+    @Transactional
+    public Posts update(PostDto postDto) {
+        Posts updatedPost = postRepository.findById(postDto.getPostId())
+                .map(post -> {
+                    List<PostImage> updatedImages = postDto.getImages().stream()
+                            .map(imageUrl -> new PostImage(imageUrl))
+                            .collect(Collectors.toList());
+                    post.updateContent(postDto.getContent());
+                    post.updateImages(updatedImages);
+                    return postRepository.save(post);
+                })
+                .orElseThrow(() -> new BusinessException(ErrorCode.POST_DOES_NOT_EXISTS));
+        return updatedPost;
+    }
 }

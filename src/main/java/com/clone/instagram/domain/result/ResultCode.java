@@ -14,6 +14,8 @@ public enum ResultCode {
 
     // Posts,
     POST_CREATED_SUCCESSFULLY(200, "P001", "글 작성 성공"),
+    POST_UPDATE_SUCCESSFULLY(200, "P002", "글 수정 성공"),
+
     ;
 
     public final int status;

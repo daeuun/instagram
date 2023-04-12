@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +24,8 @@ public class Posts {
     private List<PostImage> images = new ArrayList<>();
     @ManyToOne
     private Users writer;
-
+    private Boolean deleted = false;
+    private LocalDateTime createdAt;
     public Posts() {}
 
     public Posts(String content, Users writer) {
@@ -33,6 +36,12 @@ public class Posts {
     public Posts(String content, List<String> images, Users writer) {
         this.content = content;
         this.writer = writer;
+    }
+
+    public Posts(String content, Users writer, LocalDateTime createdAt) {
+        this.content = content;
+        this.writer = writer;
+        this.createdAt = createdAt;
     }
 
     public void addImage(String imageUrl) {

@@ -14,11 +14,11 @@ public class CreatePostRequest {
     public List<String> images;
     public Long userId;
 
+    public CreatePostRequest(){}
+
     public Posts toEntity(Users writer) {
-        Posts post = new Posts(content, writer);
-        for (String imageUrl : images) {
-            post.addImage(imageUrl);
-        }
+        Posts post = new Posts(content, writer, createdAt);
+        this.images.forEach(post::addImage);
         return post;
     }
 

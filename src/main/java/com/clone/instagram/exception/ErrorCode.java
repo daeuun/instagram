@@ -19,7 +19,15 @@ public enum ErrorCode {
 
     // jwt
     INVALID_REFRESH_TOKEN(401, "J001", "유효하지 않은 Refresh Token 입니다."),
-    ;
+
+    // Post
+    POST_DOES_NOT_EXISTS(401, "P001", "존재하지 않는 글입니다."),
+    POST_IMAGE_DOES_NOT_EXISTS(401, "P002", "존재하지 않는 이미지입니다."),
+
+    // Comment,
+    ORIGINAL_COMMENT_DOES_NOT_EXISTS(401, "C001", "존재하지 않는 댓글입니다."),
+    COMMENT_DOES_NOT_EXISTS(401, "C002", "존재하지 않는 댓글입니다.");
+
 
     private final int status;
     private final String code;

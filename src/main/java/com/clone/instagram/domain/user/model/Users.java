@@ -24,7 +24,7 @@ public class Users {
     @NotNull
     private String password;
     private String profileImage;
-    private boolean deleted;
+    private Boolean deleted = false;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<UserFollower> followers;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -40,15 +40,16 @@ public class Users {
         this.following = new HashSet<>();
     }
 
-    public Users(boolean deleted) {
-        this.deleted = deleted;
+    public boolean isDeleted () {
+        return this.deleted;
     }
 
     public Users(String email, String nickname, String password, String profileImage, boolean deleted) {
     }
 
     public Users withdraw() {
-        return new Users(this.deleted = true);
+        this.deleted = true;
+        return this;
     }
 
     public Users updateProfile(UpdateProfileRequest request) {

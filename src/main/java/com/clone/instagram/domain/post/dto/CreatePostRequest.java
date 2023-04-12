@@ -17,7 +17,7 @@ public class CreatePostRequest {
     public CreatePostRequest(){}
 
     public Posts toEntity(Users writer) {
-        Posts post = new Posts(content, writer);
+        Posts post = new Posts(content, writer, createdAt);
         this.images.forEach(post::addImage);
         return post;
     }

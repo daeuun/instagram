@@ -13,11 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static org.eclipse.jdt.internal.compiler.problem.ProblemSeverities.Optional;
 
 @Service
 public class PostService {
@@ -47,4 +42,5 @@ public class PostService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.POST_DOES_NOT_EXISTS));
         return updatedPost;
     }
+
 }

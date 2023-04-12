@@ -79,21 +79,10 @@ public class UserService {
     }
 
     public Users updateProfile(UpdateProfileRequest request) {
-//        if (request.getNickname() != null) {
-//            Optional<Users> duplicatedUser =
-//                    userRepository.findByNicknameAndNotEmailAndNotDeleted(request.getNickname(), contextId(), true);
-//            if (duplicatedUser.isPresent()) {
-//                throw new BusinessException(ErrorCode.NICKNAME_DUPLICATED);
-//            }
-//        }
-
-        //nickname 중복검사
         Optional.ofNullable(request.getNickname())
                 .filter(nickname -> !nickname.isBlank())
                 .map(nickname -> userRepository.findByNicknameAndEmailNotAndDeleted(nickname, contextId(), true))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NICKNAME_DUPLICATED));
-
-
         Users myInfo = userRepository.findByEmailAndDeleted(contextId(), false);
         Users updatedUser = myInfo.updateProfile(request);
         return userRepository.save(updatedUser);

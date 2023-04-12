@@ -14,7 +14,16 @@ public enum ResultCode {
 
     // Posts,
     POST_CREATED_SUCCESSFULLY(200, "P001", "글 작성 성공"),
-    ;
+    POST_UPDATE_SUCCESSFULLY(200, "P002", "글 수정 성공"),
+    GET_POSTS_SUCCESSFULLY(200, "P003", "글 조회 성공"),
+    DELETE_POST_SUCCESSFULLY(200, "P004", "글 삭제 성공"),
+
+    // Comment,
+    CREATE_COMMENT_SUCCESSFULLY(200, "C001", "댓글 작성 성공"),
+    GET_COMMENTS_SUCCESSFULLY(200, "C002", "댓글 조회 성공"),
+    UPDATE_COMMENT_SUCCESSFULLY(200, "C003", "댓글 수정 성공"),
+    DELETE_COMMENT_SUCCESSFULLY(200, "C004", "댓글 삭제 성공");
+    
 
     public final int status;
     public final String code;

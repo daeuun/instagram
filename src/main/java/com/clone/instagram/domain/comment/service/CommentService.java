@@ -4,6 +4,7 @@ import com.clone.instagram.domain.comment.dto.CommentDto;
 import com.clone.instagram.domain.comment.dto.CreateCommentRequest;
 import com.clone.instagram.domain.comment.model.Comment;
 import com.clone.instagram.domain.comment.repository.CommentRepository;
+import com.clone.instagram.domain.comment.repository.CommentRepositoryCustom;
 import com.clone.instagram.domain.post.model.Posts;
 import com.clone.instagram.domain.post.repository.PostRepository;
 import com.clone.instagram.domain.user.model.Users;
@@ -26,6 +27,8 @@ public class CommentService {
     private PostRepository postRepository;
     @Autowired
     private CommentRepository commentRepository;
+    @Autowired
+    private CommentRepositoryCustom commentRepositoryCustom;
 
     @Transactional
     public Comment create(CreateCommentRequest request) {
@@ -66,6 +69,31 @@ public class CommentService {
                 })
                 .orElseThrow(() -> new BusinessException(ErrorCode.COMMENT_DOES_NOT_EXISTS));
         return updatedComment;
+    }
+
+    @Transactional
+    public Boolean hardDelete(Long commentId) {
+        Comment targetComment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.COMMENT_DOES_NOT_EXISTS));
+        Posts post = postRepository.findById(targetComment.getPost().getId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.POST_DOES_NOT_EXISTS));
+        try {
+            commentRepositoryCustom.deleteReplies(commentId);
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.COMMENT_DOES_NOT_EXISTS);
+        }
+        commentRepository.delete(targetComment);
+        return true;
+    }
+
+    @Transactional
+    public Boolean delete(Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.COMMENT_DOES_NOT_EXISTS));
+        comment.softDelete();
+        List<Comment> comments = comment.findCommentsToDelete();
+        comments.forEach(commentToDelete -> commentRepository.delete(commentToDelete));
+        return true;
     }
 
     private String contextId() {

@@ -43,4 +43,22 @@ public class CommentController {
         return new ResponseEntity(result, HttpStatusCode.valueOf(result.getStatus()));
     }
 
+//    @DeleteMapping("/comment")
+    public ResponseEntity<ResultResponse> hardDelete(Long commentId) {
+        ResultResponse result = ResultResponse.of(
+                ResultCode.DELETE_COMMENT_SUCCESSFULLY,
+                commentService.hardDelete(commentId)
+        );
+        return new ResponseEntity(result, HttpStatusCode.valueOf(result.getStatus()));
+    }
+
+    @DeleteMapping("/comment/{commentId}")
+    public ResponseEntity<ResultResponse> delete(@PathVariable Long commentId) {
+        ResultResponse result = ResultResponse.of(
+                ResultCode.DELETE_COMMENT_SUCCESSFULLY,
+                commentService.delete(commentId)
+        );
+        return new ResponseEntity(result, HttpStatusCode.valueOf(result.getStatus()));
+    }
+
 }

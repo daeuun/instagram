@@ -23,7 +23,7 @@ public enum ResultCode {
     GET_COMMENTS_SUCCESSFULLY(200, "C002", "댓글 조회 성공"),
     UPDATE_COMMENT_SUCCESSFULLY(200, "C003", "댓글 수정 성공"),
     DELETE_COMMENT_SUCCESSFULLY(200, "C004", "댓글 삭제 성공");
-    
+
 
     public final int status;
     public final String code;

@@ -15,12 +15,12 @@ public class AuthController {
     @Autowired
     private AuthenticationService authenticationService;
 
-    @GetMapping("/login")
+    @GetMapping("/auth/login")
     public ResultResponse login(@RequestBody LoginRequest loginRequest) {
         JwtDto jwtDto = authenticationService.authenticate(loginRequest);
         return ResultResponse.of(ResultCode.LOGIN_SUCCESS, jwtDto);
     }
-    @PostMapping("/refresh")
+    @PostMapping("/auth/refresh")
     public ResponseEntity<JwtDto> refresh(@RequestHeader("Authorization") String refreshToken) {
         return ResponseEntity.ok(authenticationService.refresh(refreshToken));
     }

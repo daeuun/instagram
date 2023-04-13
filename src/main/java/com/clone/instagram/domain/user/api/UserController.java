@@ -30,7 +30,7 @@ public class UserController {
         userService.withdraw();
     }
 
-    @PostMapping("/users/withdraw")
+    @DeleteMapping("/users/me")
     public ResponseEntity<ResultResponse> softwithdraw() {
         userService.softWithdraw();
         ResultResponse result = ResultResponse.of(

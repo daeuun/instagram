@@ -33,7 +33,7 @@ public class PostController {
         );
         return new ResponseEntity(result, HttpStatusCode.valueOf(result.getStatus()));
     }
-
+    
     @GetMapping("/posts")
     public ResponseEntity<List<PostResponse>> getPosts(@RequestParam Long userId,
                                                        @RequestBody(required = false) PostCursor cursor,

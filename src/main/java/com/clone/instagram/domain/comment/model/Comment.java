@@ -11,6 +11,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -48,11 +49,15 @@ public class Comment {
 
     private boolean deleted = false;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
     public Comment(String content, Users writer, Posts post, Comment originalComment) {
         this.content = content;
         this.writer = writer;
         this.post = post;
         this.originalComment = originalComment;
+        this.createdAt = LocalDateTime.now();
     }
 
     public Comment() {}

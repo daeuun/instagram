@@ -1,12 +1,12 @@
 package com.clone.instagram.domain.post.model;
 
+import com.clone.instagram.domain.comment.model.Comment;
 import com.clone.instagram.domain.post.dto.CreatePostRequest;
 import com.clone.instagram.domain.user.model.Users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,8 @@ public class Posts {
     private Users writer;
     private Boolean deleted = false;
     private LocalDateTime createdAt;
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<>();
     public Posts() {}
 
     public Posts(String content, Users writer) {
@@ -75,4 +77,5 @@ public class Posts {
         // 새 이미지 추가
         updatedImages.forEach(this::addImage);
     }
+
 }

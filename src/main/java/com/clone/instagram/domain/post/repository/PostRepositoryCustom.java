@@ -18,7 +18,7 @@ import static com.clone.instagram.domain.post.model.QPosts.posts;
 public class PostRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
-    public Long findOldestPostId() {
+    public Long findLatestPostId() {
         return queryFactory.select(posts.id)
                 .from(posts)
                 .orderBy(posts.createdAt.asc())

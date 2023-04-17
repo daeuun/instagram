@@ -44,7 +44,7 @@ public class PostController {
                                                        @RequestParam(required = false) String sortBy,
                                                        @RequestParam(required = false) String sortOrder) {
         if (cursor == null) {
-            cursor = new PostCursor(postRepositoryCustom.findOldestPostId(), LocalDateTime.now());
+            cursor = new PostCursor(postRepositoryCustom.findLatestPostId(), LocalDateTime.now());
         }
         int pageSize = (limit != null) ? limit : DEFAULT_SIZE;
         PostSearchCondition condition = new PostSearchCondition(cursor, pageSize, sortBy, sortOrder);

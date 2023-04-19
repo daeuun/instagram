@@ -1,6 +1,7 @@
 package com.clone.instagram.domain.post.api;
 
 import com.clone.instagram.domain.post.dto.*;
+import com.clone.instagram.domain.post.repository.PostRepositoryCustom;
 import com.clone.instagram.domain.post.service.PostService;
 import com.clone.instagram.domain.result.ResultCode;
 import com.clone.instagram.domain.result.ResultResponse;
@@ -18,6 +19,8 @@ public class PostController {
     private static final int DEFAULT_SIZE = 12;
     @Autowired
     private PostService postService;
+    @Autowired
+    private PostRepositoryCustom postRepositoryCustom;
 
     @PostMapping("/posts")
     public ResultResponse create(@RequestBody CreatePostRequest request) {
@@ -41,7 +44,7 @@ public class PostController {
                                                        @RequestParam(required = false) String sortBy,
                                                        @RequestParam(required = false) String sortOrder) {
         if (cursor == null) {
-            cursor = new PostCursor(Long.MAX_VALUE, LocalDateTime.now());
+            cursor = new PostCursor(postRepositoryCustom.findLatestPostId(), LocalDateTime.now());
         }
         int pageSize = (limit != null) ? limit : DEFAULT_SIZE;
         PostSearchCondition condition = new PostSearchCondition(cursor, pageSize, sortBy, sortOrder);

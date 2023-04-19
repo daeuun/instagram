@@ -2,6 +2,7 @@ package com.clone.instagram.domain.user.service;
 
 import com.clone.instagram.domain.authentication.model.RefreshToken;
 import com.clone.instagram.domain.authentication.service.RefreshTokenService;
+import com.clone.instagram.domain.authentication.utils.SecurityUtil;
 import com.clone.instagram.domain.user.dto.SignUpRequest;
 import com.clone.instagram.domain.user.dto.UpdateProfileRequest;
 import com.clone.instagram.domain.user.dto.UserProfileResponseDto;
@@ -14,8 +15,6 @@ import com.clone.instagram.domain.user.util.PasswordUtil;
 import com.clone.instagram.exception.BusinessException;
 import com.clone.instagram.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +36,7 @@ public class UserService {
 
     public void signup(SignUpRequest request) {
         Optional.ofNullable(
-                userRepository.findByEmailAndDeleted(request.getEmail(), false)
+                userRepository.findByEmailAndDeleted(SecurityUtil.currentUser(), false)
         ).ifPresent(user -> {
             throw new BusinessException(ErrorCode.USER_ALREADY_EXISTS);
         });
@@ -49,7 +48,7 @@ public class UserService {
     @Transactional
     public void withdraw() {
         Optional.ofNullable(
-            userRepository.findByEmailAndDeleted(contextId(), false)
+                userRepository.findByEmailAndDeleted(SecurityUtil.currentUser(), false)
         ).ifPresentOrElse(userRepository::delete, () -> { // 유저 존재: userRepository::delete 로 유저 탈퇴처리, 유저 존재X: BusinessException
             throw new BusinessException(ErrorCode.USER_ALREADY_EXISTS);
         });
@@ -57,7 +56,7 @@ public class UserService {
 
     @Transactional
     public void softWithdraw() {
-        Users user = userRepository.findByEmailAndDeleted(contextId(), false);
+        Users user = userRepository.findByEmailAndDeleted(SecurityUtil.currentUser(), false);
         Optional.ofNullable(user)
                 .ifPresentOrElse(this::withdrawUser, () -> {
                     throw new BusinessException(ErrorCode.USER_DOES_NOT_EXISTS);
@@ -72,7 +71,7 @@ public class UserService {
     }
 
     public UserProfileResponseDto userProfile(Long userId) {
-        Users user = userRepository.findByEmailAndDeleted(contextId(), false);
+        Users user = userRepository.findByEmailAndDeleted(SecurityUtil.currentUser(), false);
         return Optional.ofNullable(user)
                 .map(u -> new UserProfileResponseDto(u.getNickname(), u.getEmail(), u.getProfileImage()))
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_DOES_NOT_EXISTS));
@@ -81,15 +80,15 @@ public class UserService {
     public Users updateProfile(UpdateProfileRequest request) {
         Optional.ofNullable(request.getNickname())
                 .filter(nickname -> !nickname.isBlank())
-                .map(nickname -> userRepository.findByNicknameAndEmailNotAndDeleted(nickname, contextId(), true))
+                .map(nickname -> userRepository.findByNicknameAndEmailNotAndDeleted(nickname, SecurityUtil.currentUser(), true))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NICKNAME_DUPLICATED));
-        Users myInfo = userRepository.findByEmailAndDeleted(contextId(), false);
+        Users myInfo = userRepository.findByEmailAndDeleted(SecurityUtil.currentUser(), false);
         Users updatedUser = myInfo.updateProfile(request);
         return userRepository.save(updatedUser);
     }
 
     public Boolean follow(Long userId) {
-        Users currentUser = userRepository.findByEmailAndDeleted(contextId(), false);
+        Users currentUser = userRepository.findByEmailAndDeleted(SecurityUtil.currentUser(), false);
         Users userToFollow = userRepository.findByIdAndDeleted(userId, false);
 
         boolean isAlreadyFollowing = userFollowerRepository.existsByUserAndFollower(currentUser, userToFollow);
@@ -99,14 +98,6 @@ public class UserService {
         UserFollower userFollower = UserFollower.follow(userToFollow, currentUser);
         userFollowerRepository.save(userFollower);
         return true;
-    }
-
-    private String contextId() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDetails) {
-            return ((UserDetails) principal).getUsername();
-        }
-        return null;
     }
 
 }

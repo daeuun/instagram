@@ -95,8 +95,23 @@ public class UserService {
         if (isAlreadyFollowing) {
             throw new BusinessException(ErrorCode.ALREADY_FOLLOWING);
         }
-        UserFollower userFollower = UserFollower.follow(userToFollow, currentUser);
+        UserFollower userFollower = UserFollower.follow(currentUser, userToFollow);
         userFollowerRepository.save(userFollower);
+        return true;
+    }
+
+    public Boolean unFollow(Long userId) {
+        Users currentUser = userRepository.findByEmailAndDeleted(SecurityUtil.currentUser(), false);
+        Users userToUnFollow = userRepository.findByIdAndDeleted(userId, false);
+
+        boolean isAlreadyFollowing = userFollowerRepository.existsByUserAndFollower(currentUser, userToUnFollow);
+        if (!isAlreadyFollowing) {
+            throw new BusinessException(ErrorCode.NOT_FOLLOWING_USER);
+        }
+
+        UserFollower userFollower = userFollowerRepository.findByUserAndFollower(currentUser, userToUnFollow)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_FOLLOWER_NOT_FOUND));
+        userFollowerRepository.delete(userFollower);
         return true;
     }
 

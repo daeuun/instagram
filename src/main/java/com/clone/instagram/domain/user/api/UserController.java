@@ -30,15 +30,15 @@ public class UserController {
         userService.withdraw();
     }
 
-    @DeleteMapping("/users/me")
-    public ResponseEntity<ResultResponse> softwithdraw() {
-        userService.softWithdraw();
-        ResultResponse result = ResultResponse.of(
-                ResultCode.USER_WITHDRAW_SUCCESS,
-                true
-        );
-        return new ResponseEntity(result, HttpStatus.valueOf(result.getStatus()));
-    }
+//    @DeleteMapping("/users/me")
+//    public ResponseEntity<ResultResponse> softwithdraw() {
+//        userService.softWithdraw();
+//        ResultResponse result = ResultResponse.of(
+//                ResultCode.USER_WITHDRAW_SUCCESS,
+//                true
+//        );
+//        return new ResponseEntity(result, HttpStatus.valueOf(result.getStatus()));
+//    }
 
     @GetMapping("/users/{userId}")
     public ResponseEntity<ResultResponse> userProfile(@PathVariable Long userId) {
@@ -63,6 +63,15 @@ public class UserController {
         ResultResponse result = ResultResponse.of(
                 ResultCode.USER_FOLLOW_SUCCESS,
                 userService.follow(userId)
+        );
+        return new ResponseEntity(result, HttpStatusCode.valueOf(result.getStatus()));
+    }
+
+    @DeleteMapping("/follow/{userId}")
+    public ResponseEntity<ResultResponse> unfollow(@PathVariable Long userId) {
+        ResultResponse result = ResultResponse.of(
+                ResultCode.USER_UNFOLLOW_SUCCESS,
+                userService.unFollow(userId)
         );
         return new ResponseEntity(result, HttpStatusCode.valueOf(result.getStatus()));
     }

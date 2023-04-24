@@ -16,6 +16,8 @@ public enum ErrorCode {
     INVALID_PROFILE_REQUEST(400, "U004", "유효하지 않은 프로필 조회 요청입니다."),
     ALREADY_FOLLOWING(400, "U005", "이미 팔로우한 회원입니다."),
     NICKNAME_DUPLICATED(400, "U006", "이미 존재하는 닉네임입니다."),
+    NOT_FOLLOWING_USER(400, "U007", "팔로잉하지 않는 유저입니다."),
+    USER_FOLLOWER_NOT_FOUND(400, "U008", "팔로우하지 않는 유저입니다."),
 
     // jwt
     INVALID_REFRESH_TOKEN(401, "J001", "유효하지 않은 Refresh Token 입니다."),
@@ -26,7 +28,8 @@ public enum ErrorCode {
 
     // Comment,
     ORIGINAL_COMMENT_DOES_NOT_EXISTS(401, "C001", "존재하지 않는 댓글입니다."),
-    COMMENT_DOES_NOT_EXISTS(401, "C002", "존재하지 않는 댓글입니다.");
+    COMMENT_DOES_NOT_EXISTS(401, "C002", "존재하지 않는 댓글입니다."),
+    ;
 
 
     private final int status;

@@ -11,6 +11,7 @@ public enum ResultCode {
     USER_FOLLOW_SUCCESS(200, "U007", "회원 팔로우 성공"),
     GET_USER_PROFILE_SUCCESSFULLY(200, "U008", "프로필 조회 성공"),
     UPDATE_MY_PROFILE_SUCCESSFULLY(200, "U009", "프로필 수정 성공"),
+    USER_UNFOLLOW_SUCCESS(200, "U010", "회원 팔로우 삭제 성공"),
 
     // Posts,
     POST_CREATED_SUCCESSFULLY(200, "P001", "글 작성 성공"),
@@ -22,7 +23,8 @@ public enum ResultCode {
     CREATE_COMMENT_SUCCESSFULLY(200, "C001", "댓글 작성 성공"),
     GET_COMMENTS_SUCCESSFULLY(200, "C002", "댓글 조회 성공"),
     UPDATE_COMMENT_SUCCESSFULLY(200, "C003", "댓글 수정 성공"),
-    DELETE_COMMENT_SUCCESSFULLY(200, "C004", "댓글 삭제 성공");
+    DELETE_COMMENT_SUCCESSFULLY(200, "C004", "댓글 삭제 성공"),
+    ;
 
 
     public final int status;

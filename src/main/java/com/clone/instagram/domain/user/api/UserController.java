@@ -5,7 +5,7 @@ import com.clone.instagram.domain.user.dto.UpdateProfileRequest;
 import com.clone.instagram.domain.user.service.UserService;
 import com.clone.instagram.domain.result.ResultCode;
 import com.clone.instagram.domain.result.ResultResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +14,11 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class UserController {
-    @Autowired
-    private UserService userService;
+
+    private final UserService userService;
 
     @PostMapping("/signup")
     public Boolean signUp(@Validated @RequestBody SignUpRequest request) {

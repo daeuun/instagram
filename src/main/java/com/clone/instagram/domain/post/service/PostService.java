@@ -13,7 +13,7 @@ import com.clone.instagram.domain.user.model.Users;
 import com.clone.instagram.domain.user.repository.UserRepository;
 import com.clone.instagram.exception.BusinessException;
 import com.clone.instagram.exception.ErrorCode;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,15 +25,13 @@ import java.util.stream.Collectors;
 
 
 @Service
+@RequiredArgsConstructor
 public class PostService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PostRepository postRepository;
-    @Autowired
-    private PostRepositoryCustom postRepositoryCustom;
-    @Autowired
-    private PostImageRepository postImageRepository;
+
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final PostRepositoryCustom postRepositoryCustom;
+    private final PostImageRepository postImageRepository;
 
     @Transactional
     public Boolean create(CreatePostRequest request) {

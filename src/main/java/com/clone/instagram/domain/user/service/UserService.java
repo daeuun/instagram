@@ -14,25 +14,21 @@ import com.clone.instagram.domain.user.repository.UserRepository;
 import com.clone.instagram.domain.user.util.PasswordUtil;
 import com.clone.instagram.exception.BusinessException;
 import com.clone.instagram.exception.ErrorCode;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RefreshTokenService refreshTokenService;
-    @Autowired
-    private PasswordUtil passwordUtil;
-    @Autowired
-    private UserFollowerRepository userFollowerRepository;
-    @Autowired
-    private UserFollowingRepository userFollowingRepository;
+    private final UserRepository userRepository;
+    private final RefreshTokenService refreshTokenService;
+    private final PasswordUtil passwordUtil;
+    private final UserFollowerRepository userFollowerRepository;
+    private final UserFollowingRepository userFollowingRepository;
 
     public void signup(SignUpRequest request) {
         Optional.ofNullable(

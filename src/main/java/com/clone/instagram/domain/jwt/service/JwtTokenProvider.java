@@ -1,6 +1,6 @@
 package com.clone.instagram.domain.jwt.service;
 
-import com.clone.instagram.domain.jwt.model.JwtDto;
+import com.clone.instagram.domain.jwt.model.AuthToken;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,13 +32,14 @@ public class JwtTokenProvider {
     private static final String BEARER_TYPE = "Bearer";
     private static final String CLAIM_JWT_TYPE_KEY = "type";
     private static final String CLAIM_AUTHORITIES_KEY = "authorities";
-    private final long tokenValidTime = 1000 * 10L * 1000;
-    public  final int REFRESH_TOKEN_EXPIRES = 60 * 60 * 24 * 14;
+    private final long ACCESS_TOKEN_EXPIRES = 1000 * 10L * 1000;
+    private final int REFRESH_TOKEN_EXPIRES = 60 * 60 * 24 * 14;
+    private static final long SECOND_TO_MILLISECONDS = 1000L;
 
-    public JwtDto generateTokenDto(Authentication authentication) {
+    public AuthToken generateTokenDto(Authentication authentication) {
         final Date now = new Date();
-        final Date validity = new Date(now.getTime() + tokenValidTime);
-        final Date refreshExpiration = new Date(now.getTime() + REFRESH_TOKEN_EXPIRES * 1000L);
+        final Date validity = new Date(now.getTime() + ACCESS_TOKEN_EXPIRES);
+        final Date refreshExpiration = new Date(now.getTime() + REFRESH_TOKEN_EXPIRES * SECOND_TO_MILLISECONDS);
 
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
@@ -57,7 +58,7 @@ public class JwtTokenProvider {
                 .setIssuedAt(now)
                 .signWith(jwtKey, SignatureAlgorithm.HS512)
                 .compact();
-        return new JwtDto(BEARER_TYPE, accessToken, refreshToken);
+        return new AuthToken(BEARER_TYPE, accessToken, refreshToken);
     }
 
     public Authentication getAuthentication(String token) {

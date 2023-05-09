@@ -1,6 +1,6 @@
 package com.clone.instagram.domain.authentication.service;
 
-import com.clone.instagram.domain.jwt.model.JwtDto;
+import com.clone.instagram.domain.jwt.model.AuthToken;
 import com.clone.instagram.domain.jwt.service.JwtTokenProvider;
 import com.clone.instagram.domain.user.model.Users;
 import com.clone.instagram.domain.authentication.model.RefreshToken;
@@ -21,22 +21,22 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final RefreshTokenService refreshTokenService;
 
-    public JwtDto authenticate(LoginRequest loginRequest) {
+    public AuthToken authenticate(LoginRequest loginRequest) {
             UsernamePasswordAuthenticationToken authenticationToken
                     = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
         return jwtTokenProvider.generateTokenDto(authenticationToken);
     }
 
-    public JwtDto refresh(String refreshToken) {
+    public AuthToken refresh(String refreshToken) {
         if (jwtTokenProvider.validateToken(refreshToken)) {
             Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
 
-            JwtDto jwtDto = jwtTokenProvider.generateTokenDto(authentication);
+            AuthToken authToken = jwtTokenProvider.generateTokenDto(authentication);
             Users user = userRepository.findByEmailAndDeleted(authentication.getName(), false);
             RefreshToken userRefreshToken = refreshTokenService.findRefreshToken(user.getId());
 
-            refreshTokenService.updateRefreshToken(userRefreshToken, jwtDto.getRefreshToken());
-            return jwtDto;
+            refreshTokenService.updateRefreshToken(userRefreshToken, authToken.getRefreshToken());
+            return authToken;
         }
         throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
     }

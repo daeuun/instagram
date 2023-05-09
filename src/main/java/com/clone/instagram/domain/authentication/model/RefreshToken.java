@@ -5,10 +5,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
 
 @Getter
+@NoArgsConstructor
 @Entity
 public class RefreshToken {
     @Id
@@ -24,7 +26,4 @@ public class RefreshToken {
         this.id = id;
     }
 
-    public RefreshToken() {
-
-    }
 }

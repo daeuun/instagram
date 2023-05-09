@@ -1,7 +1,7 @@
 package com.clone.instagram.domain.authentication.api;
 
 import com.clone.instagram.domain.authentication.service.AuthenticationService;
-import com.clone.instagram.domain.jwt.model.JwtDto;
+import com.clone.instagram.domain.jwt.model.AuthToken;
 import com.clone.instagram.domain.result.ResultCode;
 import com.clone.instagram.domain.result.ResultResponse;
 import com.clone.instagram.domain.authentication.dto.LoginRequest;
@@ -18,11 +18,11 @@ public class AuthController {
 
     @GetMapping("/auth/login")
     public ResultResponse login(@RequestBody LoginRequest loginRequest) {
-        JwtDto jwtDto = authenticationService.authenticate(loginRequest);
-        return ResultResponse.of(ResultCode.LOGIN_SUCCESS, jwtDto);
+        AuthToken authToken = authenticationService.authenticate(loginRequest);
+        return ResultResponse.of(ResultCode.LOGIN_SUCCESS, authToken);
     }
     @PostMapping("/auth/refresh")
-    public ResponseEntity<JwtDto> refresh(@RequestHeader("Authorization") String refreshToken) {
+    public ResponseEntity<AuthToken> refresh(@RequestHeader("Authorization") String refreshToken) {
         return ResponseEntity.ok(authenticationService.refresh(refreshToken));
     }
 

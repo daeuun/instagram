@@ -11,7 +11,7 @@ import com.clone.instagram.domain.user.model.Users;
 import com.clone.instagram.domain.user.repository.UserRepository;
 import com.clone.instagram.exception.BusinessException;
 import com.clone.instagram.exception.ErrorCode;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -20,15 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CommentService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PostRepository postRepository;
-    @Autowired
-    private CommentRepository commentRepository;
-    @Autowired
-    private CommentRepositoryCustom commentRepositoryCustom;
+
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
+    private final CommentRepositoryCustom commentRepositoryCustom;
 
     @Transactional
     public Comment create(CreateCommentRequest request) {

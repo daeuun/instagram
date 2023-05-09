@@ -5,15 +5,16 @@ import com.clone.instagram.domain.jwt.model.JwtDto;
 import com.clone.instagram.domain.result.ResultCode;
 import com.clone.instagram.domain.result.ResultResponse;
 import com.clone.instagram.domain.authentication.dto.LoginRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class AuthController {
-    @Autowired
-    private AuthenticationService authenticationService;
+
+    private final AuthenticationService authenticationService;
 
     @GetMapping("/auth/login")
     public ResultResponse login(@RequestBody LoginRequest loginRequest) {

@@ -5,16 +5,17 @@ import com.clone.instagram.domain.comment.dto.CreateCommentRequest;
 import com.clone.instagram.domain.comment.service.CommentService;
 import com.clone.instagram.domain.result.ResultCode;
 import com.clone.instagram.domain.result.ResultResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class CommentController {
-    @Autowired
-    private CommentService commentService;
+
+    private final CommentService commentService;
 
     @PostMapping("/comment")
     public ResponseEntity<ResultResponse> create(@RequestBody CreateCommentRequest request) {
@@ -43,7 +44,7 @@ public class CommentController {
         return new ResponseEntity(result, HttpStatusCode.valueOf(result.getStatus()));
     }
 
-//    @DeleteMapping("/comment")
+    @DeleteMapping("/comment")
     public ResponseEntity<ResultResponse> hardDelete(Long commentId) {
         ResultResponse result = ResultResponse.of(
                 ResultCode.DELETE_COMMENT_SUCCESSFULLY,

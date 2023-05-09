@@ -1,5 +1,6 @@
 package com.clone.instagram.domain.user.model;
 
+import com.clone.instagram.domain.message.model.ChatRoom;
 import com.clone.instagram.domain.user.dto.UpdateProfileRequest;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
@@ -7,6 +8,7 @@ import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -29,6 +31,10 @@ public class Users {
     private Set<UserFollower> followers;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<UserFollowing> following;
+
+    // N+N 관계 써도 되는건가?
+    @ManyToMany(mappedBy = "users")
+    private List<ChatRoom> chatRooms;
 
     protected Users() {}
 

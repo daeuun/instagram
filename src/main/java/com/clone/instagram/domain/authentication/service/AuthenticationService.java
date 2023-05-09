@@ -8,28 +8,22 @@ import com.clone.instagram.domain.user.repository.UserRepository;
 import com.clone.instagram.domain.authentication.dto.LoginRequest;
 import com.clone.instagram.exception.BusinessException;
 import com.clone.instagram.exception.ErrorCode;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AuthenticationService {
 
     private final JwtTokenProvider jwtTokenProvider;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RefreshTokenService refreshTokenService;
-
-    @Autowired
-    public AuthenticationService(JwtTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
+    private final UserRepository userRepository;
+    private final RefreshTokenService refreshTokenService;
 
     public JwtDto authenticate(LoginRequest loginRequest) {
-        UsernamePasswordAuthenticationToken authenticationToken
-                = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
+            UsernamePasswordAuthenticationToken authenticationToken
+                    = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
         return jwtTokenProvider.generateTokenDto(authenticationToken);
     }
 

@@ -5,7 +5,7 @@ import com.clone.instagram.domain.post.repository.PostRepositoryCustom;
 import com.clone.instagram.domain.post.service.PostService;
 import com.clone.instagram.domain.result.ResultCode;
 import com.clone.instagram.domain.result.ResultResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,13 +14,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class PostController {
     private static final int DEFAULT_SIZE = 12;
-    @Autowired
-    private PostService postService;
-    @Autowired
-    private PostRepositoryCustom postRepositoryCustom;
+    private final PostService postService;
+    private final PostRepositoryCustom postRepositoryCustom;
 
     @PostMapping("/posts")
     public ResultResponse create(@RequestBody CreatePostRequest request) {

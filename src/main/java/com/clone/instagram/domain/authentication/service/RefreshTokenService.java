@@ -1,18 +1,15 @@
 package com.clone.instagram.domain.authentication.service;
 
 import com.clone.instagram.domain.authentication.repository.RefreshTokenRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.clone.instagram.domain.authentication.model.RefreshToken;
 
 @Service
+@RequiredArgsConstructor
 public class RefreshTokenService {
-    private RefreshTokenRepository refreshTokenRepository;
 
-    @Autowired
-    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository) {
-        this.refreshTokenRepository = refreshTokenRepository;
-    }
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public RefreshToken findRefreshToken(Long id) {
         return refreshTokenRepository.findByUserId(id);

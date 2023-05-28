@@ -1,16 +1,18 @@
 package com.clone.instagram.domain.comment.service;
 
 import com.clone.instagram.domain.comment.dto.CommentDto;
-import com.clone.instagram.domain.comment.dto.CreateCommentRequest;
-import com.clone.instagram.domain.comment.model.Comment;
-import com.clone.instagram.domain.comment.repository.CommentRepository;
-import com.clone.instagram.domain.comment.repository.CommentRepositoryCustom;
+import com.clone.instagram.domain.comment.dto.CommentCreateRequest;
+import com.clone.instagram.domain.comment.models.Comment;
+import com.clone.instagram.domain.comment.resources.CommentMapper;
+import com.clone.instagram.domain.comment.resources.CommentRepository;
+import com.clone.instagram.domain.comment.resources.CommentRepositoryCustom;
 import com.clone.instagram.domain.post.model.Posts;
 import com.clone.instagram.domain.post.repository.PostRepository;
 import com.clone.instagram.domain.user.model.Users;
 import com.clone.instagram.domain.user.repository.UserRepository;
 import com.clone.instagram.exception.BusinessException;
 import com.clone.instagram.exception.ErrorCode;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,24 +29,26 @@ public class CommentService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final CommentRepositoryCustom commentRepositoryCustom;
+    private final CommentMapper commentMapper;
 
     @Transactional
-    public Comment create(CreateCommentRequest request) {
-        Users user = userRepository.findByIdAndDeleted(request.getUserId(), false);
-        if (user == null) {
-            throw new BusinessException(ErrorCode.USER_DOES_NOT_EXISTS);
-        }
-        Posts post = postRepository.findById(request.getPostId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.POST_DOES_NOT_EXISTS));
-        Comment originalComment = null;
-        if (request.getOriginalCommentId() != null) {
-            originalComment = commentRepository.findById(request.getOriginalCommentId())
-                    .orElseThrow(() -> new BusinessException(ErrorCode.ORIGINAL_COMMENT_DOES_NOT_EXISTS));
-        }
+    public void create(CommentCreateRequest request) {
+        Users user = getUser(request);
+        Posts post = getPost(request);
+        Comment comment = commentMapper.from(request);
+        Comment original = commentRepository.findById(request.getOriginalCommentId()).orElse(null);
+        comment.create(user, post, original);
+        commentRepository.save(comment);
+    }
 
-        Comment newComment = request.toEntity(user, post, originalComment);
-        commentRepository.save(newComment);
-        return newComment;
+    private Users getUser(CommentCreateRequest request) {
+        return userRepository.findByIdAndDeleted(request.getUserId(), false)
+                .orElseThrow(() -> new EntityNotFoundException("user not found with id: $request.getUserId()"));
+    }
+
+    private Posts getPost(CommentCreateRequest request) {
+        return postRepository.findById(request.getPostId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.POST_DOES_NOT_EXISTS));
     }
 
     public List<Comment> getComments(Long postId) {
@@ -54,12 +58,8 @@ public class CommentService {
 
     @Transactional
     public Comment update(Long commentId, CommentDto request) {
-        Users user = userRepository.findByEmailAndDeleted(contextId(), false);
-        if (user == null) {
-            throw new BusinessException(ErrorCode.USER_DOES_NOT_EXISTS);
-        }
-        Posts post = postRepository.findById(request.getPostId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.POST_DOES_NOT_EXISTS));
+        Users user = getUser();
+        Posts post = getPost(request);
         Comment updatedComment = commentRepository.findById(commentId)
                 .map(original -> {
                     Comment commentToUpdate = original.update(request, post);
@@ -67,6 +67,20 @@ public class CommentService {
                 })
                 .orElseThrow(() -> new BusinessException(ErrorCode.COMMENT_DOES_NOT_EXISTS));
         return updatedComment;
+    }
+
+    private Users getUser() {
+        Users user = userRepository.findByEmailAndDeleted(contextId(), false);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.USER_DOES_NOT_EXISTS);
+        }
+        return user;
+    }
+
+    private Posts getPost(CommentDto request) {
+        Posts post = postRepository.findById(request.getPostId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.POST_DOES_NOT_EXISTS));
+        return post;
     }
 
     @Transactional

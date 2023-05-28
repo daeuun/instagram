@@ -1,46 +1,42 @@
-package com.clone.instagram.domain.comment.model;
+package com.clone.instagram.domain.comment.models;
 
+import com.clone.instagram.domain.comment.dto.CommentCreateRequest;
 import com.clone.instagram.domain.comment.dto.CommentDto;
 import com.clone.instagram.domain.post.model.Posts;
 import com.clone.instagram.domain.user.model.Users;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static jakarta.persistence.FetchType.LAZY;
-
 @Entity
 @AllArgsConstructor
+//@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Getter
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, length = 2000)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
-    @JsonIgnore
     private Users writer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    @JsonIgnore
     private Posts post;
 
     @ManyToOne
-    @JsonBackReference
     @JoinColumn(name = "original_comment_id")
     private Comment originalComment;
 
@@ -50,17 +46,28 @@ public class Comment {
     private boolean deleted = false;
 
     @Column(name = "created_at")
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
-    public Comment(String content, Users writer, Posts post, Comment originalComment) {
+    @Column(name = "updated_at")
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    public Comment(String content, Users writer, Posts post) {
         this.content = content;
         this.writer = writer;
         this.post = post;
-        this.originalComment = originalComment;
-        this.createdAt = LocalDateTime.now();
     }
 
-    public Comment() {}
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void create(Users writer, Posts post, Comment originalComment) {
+        this.writer = writer;
+        this.post = post;
+        this.originalComment = originalComment;
+    }
 
     public Comment update(CommentDto request, Posts post) {
         this.content = request.getContent();
@@ -80,7 +87,8 @@ public class Comment {
         List<Comment> commentsToDelete = new ArrayList<>();
         Optional.ofNullable(this.originalComment).ifPresentOrElse(
                 originalComment -> {
-                    if(originalComment.isDeleted() && originalComment.isAllRepliesDeleted()) {
+                    if(originalComment.isDeleted() &&
+                            originalComment.isAllRepliesDeleted()) {
                         commentsToDelete.add(this);
                     }
                 },

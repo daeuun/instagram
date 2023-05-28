@@ -85,7 +85,7 @@ public class UserService {
 
     public Boolean follow(Long userId) {
         Users currentUser = userRepository.findByEmailAndDeleted(SecurityUtil.currentUser(), false);
-        Users userToFollow = userRepository.findByIdAndDeleted(userId, false);
+        Users userToFollow = userRepository.findByIdAndDeleted(userId, false).orElseThrow();
 
         boolean isAlreadyFollowing = userFollowerRepository.existsByUserAndFollower(currentUser, userToFollow);
         if (isAlreadyFollowing) {
@@ -98,7 +98,7 @@ public class UserService {
 
     public Boolean unFollow(Long userId) {
         Users currentUser = userRepository.findByEmailAndDeleted(SecurityUtil.currentUser(), false);
-        Users userToUnFollow = userRepository.findByIdAndDeleted(userId, false);
+        Users userToUnFollow = userRepository.findByIdAndDeleted(userId, false).orElseThrow();
 
         boolean isAlreadyFollowing = userFollowerRepository.existsByUserAndFollower(currentUser, userToUnFollow);
         if (!isAlreadyFollowing) {

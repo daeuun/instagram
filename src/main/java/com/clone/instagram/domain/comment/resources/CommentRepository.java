@@ -1,6 +1,6 @@
-package com.clone.instagram.domain.comment.repository;
+package com.clone.instagram.domain.comment.resources;
 
-import com.clone.instagram.domain.comment.model.Comment;
+import com.clone.instagram.domain.comment.models.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,6 @@
 package com.clone.instagram.domain.post.dto;
 
-import com.clone.instagram.domain.comment.model.Comment;
+import com.clone.instagram.domain.comment.models.Comment;
 import com.clone.instagram.domain.post.model.PostImage;
 import com.clone.instagram.domain.post.model.Posts;
 import com.clone.instagram.domain.user.model.Users;

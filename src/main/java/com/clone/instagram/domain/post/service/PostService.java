@@ -35,7 +35,7 @@ public class PostService {
 
     @Transactional
     public Boolean create(CreatePostRequest request) {
-        Users writer = userRepository.findByIdAndDeleted(request.getUserId(), false);
+        Users writer = userRepository.findByIdAndDeleted(request.getUserId(), false).orElseThrow();
         postRepository.save(request.toEntity(writer));
         return true;
     }
@@ -56,7 +56,7 @@ public class PostService {
     }
 
     public List<PostResponse> getPosts(Long userId, PostSearchCondition condition) {
-        Users user = userRepository.findByIdAndDeleted(userId, false);
+        Users user = userRepository.findByIdAndDeleted(userId, false).orElseThrow();
         if (user == null) {
             throw new BusinessException(ErrorCode.USER_DOES_NOT_EXISTS);
         }

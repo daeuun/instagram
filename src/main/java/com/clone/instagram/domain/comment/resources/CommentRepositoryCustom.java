@@ -1,10 +1,10 @@
-package com.clone.instagram.domain.comment.repository;
+package com.clone.instagram.domain.comment.resources;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import static com.clone.instagram.domain.comment.model.QComment.comment;
+import static com.clone.instagram.domain.comment.models.QComment.comment;
 
 @Repository
 @RequiredArgsConstructor

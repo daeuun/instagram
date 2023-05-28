@@ -1,7 +1,7 @@
 package com.clone.instagram.domain.comment.api;
 
 import com.clone.instagram.domain.comment.dto.CommentDto;
-import com.clone.instagram.domain.comment.dto.CreateCommentRequest;
+import com.clone.instagram.domain.comment.dto.CommentCreateRequest;
 import com.clone.instagram.domain.comment.service.CommentService;
 import com.clone.instagram.domain.result.ResultCode;
 import com.clone.instagram.domain.result.ResultResponse;
@@ -18,12 +18,9 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/comment")
-    public ResponseEntity<ResultResponse> create(@RequestBody CreateCommentRequest request) {
-        ResultResponse result = ResultResponse.of(
-                ResultCode.CREATE_COMMENT_SUCCESSFULLY,
-                commentService.create(request)
-        );
-        return new ResponseEntity(result, HttpStatusCode.valueOf(result.getStatus()));
+    public ResultResponse create(@RequestBody CommentCreateRequest request) {
+        commentService.create(request);
+        return ResultResponse.of(ResultCode.CREATE_COMMENT_SUCCESSFULLY, true);
     }
 
     @GetMapping("/comment/{postId}")

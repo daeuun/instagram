@@ -1,6 +1,6 @@
 package com.clone.instagram.domain.post.model;
 
-import com.clone.instagram.domain.comment.model.Comment;
+import com.clone.instagram.domain.comment.models.Comment;
 import com.clone.instagram.domain.post.dto.CreatePostRequest;
 import com.clone.instagram.domain.user.model.Users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
